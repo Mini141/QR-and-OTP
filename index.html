@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Authentication System</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .home-container {
+            min-height: 100vh;
+            background-color: #f5f5f5;
+        }
+        
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .nav-btn {
+            padding: 0.5rem 1.5rem;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .login-btn {
+            background-color: transparent;
+            color: #4CAF50;
+            border: 2px solid #4CAF50;
+        }
+        
+        .signup-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: 2px solid #4CAF50;
+        }
+        
+        .login-btn:hover {
+            background-color: #4CAF50;
+            color: white;
+        }
+        
+        .signup-btn:hover {
+            background-color: #45a049;
+        }
+        
+        .hero-section {
+            padding: 4rem 2rem;
+            text-align: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .hero-content h1 {
+            font-size: 3rem;
+            color: #333;
+            margin-bottom: 1rem;
+        }
+        
+        .hero-text {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 3rem;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+        
+        .feature-card {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .feature-card i {
+            font-size: 2.5rem;
+            color: #4CAF50;
+            margin-bottom: 1rem;
+        }
+        
+        .feature-card h3 {
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+        
+        .feature-card p {
+            color: #666;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 3rem;
+        }
+        
+        .cta-btn {
+            padding: 1rem 2rem;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .primary {
+            background-color: #4CAF50;
+            color: white;
+        }
+        
+        .secondary {
+            background-color: transparent;
+            color: #4CAF50;
+            border: 2px solid #4CAF50;
+        }
+        
+        .primary:hover {
+            background-color: #45a049;
+        }
+        
+        .secondary:hover {
+            background-color: #4CAF50;
+            color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .hero-content h1 {
+                font-size: 2rem;
+            }
+            
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+            }
+            
+            .cta-btn {
+                width: 100%;
+                text-align: center;
+            }
+        }
+        
+        .section-divider {
+            margin: 6rem 0;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .how-it-works {
+            padding: 4rem 2rem;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+            margin: 4rem auto;
+            max-width: 1200px;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: #333;
+            font-size: 2.5rem;
+        }
+
+        .steps-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 1.5rem;
+            padding: 0 1rem;
+            overflow-x: auto;
+            /* Smooth scrolling on mobile */
+            -webkit-overflow-scrolling: touch;
+            /* Hide scrollbar but keep functionality */
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .steps-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .step-card {
+            background-color: #f8f9fa;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            flex: 1;
+            min-width: 250px;
+            max-width: 300px;
+        }
+
+        .step-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .step-number {
+            background-color: #4CAF50;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .step-icon {
+            font-size: 2.5rem;
+            color: #4CAF50;
+            margin: 1rem 0;
+        }
+
+        .step-title {
+            color: #333;
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+        }
+
+        .step-description {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 1200px) {
+            .steps-container {
+                justify-content: flex-start;
+                padding-bottom: 1rem; /* Space for potential scrollbar */
+            }
+            
+            .step-card {
+                min-width: 280px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .how-it-works {
+                margin: 2rem 1rem;
+                padding: 2rem 1rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .step-card {
+                min-width: 260px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="home-container">
+        <nav class="navbar">
+            <div class="logo">
+                <i class="fas fa-shield-alt"></i>
+                SecureAuth
+            </div>
+            <div class="nav-buttons">
+                <a href="login.html" class="nav-btn login-btn">Login</a>
+                <a href="login.html?form=signup" class="nav-btn signup-btn">Sign Up</a>
+            </div>
+        </nav>
+
+        <main class="hero-section">
+            <div class="hero-content">
+                <h1>Next-Gen Authentication</h1>
+                <p class="hero-text">Experience secure login with QR code scanning and OTP verification</p>
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <i class="fas fa-qrcode"></i>
+                        <h3>QR Authentication</h3>
+                        <p>Quick and secure access using QR code scanning</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-key"></i>
+                        <h3>OTP Verification</h3>
+                        <p>Double-layer security with email OTP</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-shield-alt"></i>
+                        <h3>Secure Access</h3>
+                        <p>Advanced encryption for your data</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-mobile-alt"></i>
+                        <h3>Mobile Friendly</h3>
+                        <p>Seamless experience across all devices</p>
+                    </div>
+                </div>
+                <div class="cta-buttons">
+                    <a href="login.html" class="cta-btn primary">Get Started</a>
+                    <a href="#how-it-works" class="cta-btn secondary" onclick="scrollToSection('how-it-works')">Learn More</a>
+                </div>
+            </div>
+        </main>
+
+        <div class="section-divider"></div>
+
+        <section id="how-it-works" class="how-it-works">
+            <h2 class="section-title">How It Works</h2>
+            <div class="steps-container">
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <i class="fas fa-user-plus step-icon"></i>
+                    <h3 class="step-title">Create Account</h3>
+                    <p class="step-description">Sign up with your email and password. Our Firebase Authentication ensures your credentials are securely stored and protected.</p>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <i class="fas fa-qrcode step-icon"></i>
+                    <h3 class="step-title">Scan QR Code</h3>
+                    <p class="step-description">After login, scan the displayed QR code with your mobile device to initiate the two-factor authentication process.</p>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <i class="fas fa-envelope step-icon"></i>
+                    <h3 class="step-title">Receive OTP</h3>
+                    <p class="step-description">A 6-digit OTP will be sent to your registered email address for additional verification and security.</p>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-number">4</div>
+                    <i class="fas fa-shield-alt step-icon"></i>
+                    <h3 class="step-title">Verify & Access</h3>
+                    <p class="step-description">Enter the OTP to complete the verification. Once verified, you'll have secure access to your account.</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        function scrollToSection(sectionId) {
+            event.preventDefault();
+            document.getElementById(sectionId).scrollIntoView({
+                behavior: 'smooth'
+            });
+        }
+    </script>
+</body>
+</html>
