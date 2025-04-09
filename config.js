@@ -6,8 +6,8 @@ const firebaseConfig = {
     storageBucket: "attendence-a0f9f.firebasestorage.app",
     messagingSenderId: "399592495310",
     appId: "1:399592495310:web:f9f2b70e4318486034d89f",
-    // Add database URL
-    databaseURL: "https://attendence-a0f9f-default-rtdb.firebaseio.com"
+    // Update database URL to correct region
+    databaseURL: "https://attendence-a0f9f-default-rtdb.asia-southeast1.firebasedatabase.app"
 };
 
 // Initialize Firebase with additional settings for cookie handling
