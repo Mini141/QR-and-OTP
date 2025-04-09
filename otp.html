@@ -8,124 +8,287 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     <script src="config.js"></script>
     <style>
+        :root {
+            --primary-color: #6366f1;
+            --secondary-color: #818cf8;
+            --accent-color: #4f46e5;
+            --background-color: #0f172a;
+            --text-color: #e2e8f0;
+            --error-color: #ef4444;
+            --success-color: #22c55e;
+            --border-color: #1e293b;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5);
+            --glow: 0 0 20px rgba(99, 102, 241, 0.5);
+        }
+
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes floatParticles {
+            0% { transform: translateY(0) translateX(0); }
+            25% { transform: translateY(-10px) translateX(10px); }
+            50% { transform: translateY(0) translateX(20px); }
+            75% { transform: translateY(10px) translateX(10px); }
+            100% { transform: translateY(0) translateX(0); }
+        }
+
+        @keyframes pulseGlow {
+            0% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.1); }
+            100% { opacity: 0.3; transform: scale(1); }
+        }
+
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Inter', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            background-color: #f5f5f5;
+            background: linear-gradient(135deg, var(--background-color) 0%, #1e293b 100%);
+            background-size: 400% 400%;
+            animation: gradientAnimation 15s ease infinite;
+            color: var(--text-color);
             padding: 20px;
+            box-sizing: border-box;
+            position: relative;
+            overflow: hidden;
         }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(99, 102, 241, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(99, 102, 241, 0.1) 0%, transparent 50%);
+            animation: pulse 8s infinite;
+            pointer-events: none;
+        }
+
         .container {
             text-align: center;
-            padding: 2rem;
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 2.5rem;
+            background: var(--card-bg);
+            border-radius: 1rem;
+            box-shadow: var(--shadow-lg);
             width: 90%;
             max-width: 400px;
             position: relative;
+            margin-top: 40px;
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(10px);
+            animation: slideIn 0.5s ease-out;
         }
+
         .header {
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
         }
+
         .header i {
-            font-size: 3rem;
-            color: #4CAF50;
-            margin-bottom: 1rem;
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 0.8rem;
+            animation: float 3s ease-in-out infinite;
         }
+
         .header h1 {
-            color: #333;
+            color: var(--text-color);
             margin: 0;
-            font-size: 1.8rem;
+            font-size: 1.5rem;
+            line-height: 1.2;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
+
         .header p {
-            color: #666;
+            color: var(--text-color);
             margin: 0.5rem 0;
+            font-size: 0.9rem;
+            opacity: 0.8;
         }
+
         .info-box {
-            background-color: #f8f9fa;
-            border-left: 4px solid #4CAF50;
+            background: rgba(30, 41, 59, 0.5);
+            border-left: 4px solid var(--primary-color);
             padding: 1rem;
             margin: 1rem 0;
             text-align: left;
+            font-size: 0.9rem;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
         }
+
+        .info-box:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--glow);
+        }
+
         .info-box h3 {
             margin: 0 0 0.5rem 0;
-            color: #333;
+            color: var(--text-color);
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
+
         .info-box p {
-            margin: 0.5rem 0;
-            color: #666;
+            margin: 0.4rem 0;
+            color: var(--text-color);
+            line-height: 1.4;
+            opacity: 0.8;
         }
+
         .send-otp-btn {
-            background-color: #4CAF50;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
             padding: 12px 24px;
             border: none;
-            border-radius: 5px;
-            font-size: 16px;
+            border-radius: 0.5rem;
+            font-size: 1rem;
             cursor: pointer;
             width: 100%;
             margin-top: 1rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
+
         .send-otp-btn:disabled {
-            background-color: #cccccc;
+            background: var(--border-color);
             cursor: not-allowed;
+            opacity: 0.7;
         }
+
         .send-otp-btn:hover:not(:disabled) {
-            background-color: #45a049;
+            transform: translateY(-2px);
+            box-shadow: var(--glow);
         }
+
+        .send-otp-btn:active:not(:disabled) {
+            transform: scale(0.98);
+        }
+
         .status-message {
             margin-top: 15px;
-            font-size: 14px;
+            font-size: 0.9rem;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
         }
+
         .success {
-            color: #4CAF50;
+            color: var(--success-color);
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid var(--success-color);
         }
+
         .error {
-            color: #f44336;
+            color: var(--error-color);
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid var(--error-color);
         }
+
         .timer {
-            color: #666;
+            color: var(--text-color);
             margin-top: 1rem;
+            font-size: 0.9rem;
+            opacity: 0.8;
         }
+
         .back-btn {
-            position: absolute;
+            position: fixed;
             top: 20px;
             left: 20px;
-            background-color: #4CAF50;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
-            padding: 10px 20px;
-            border-radius: 5px;
+            padding: 8px 16px;
+            border-radius: 0.5rem;
             text-decoration: none;
             display: flex;
             align-items: center;
             gap: 8px;
+            font-size: 0.9rem;
+            z-index: 1000;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+            border: 1px solid var(--border-color);
         }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--glow);
+        }
+
+        .back-btn:active {
+            transform: scale(0.95);
+        }
+
+        @keyframes slideIn {
+            from { 
+                opacity: 0; 
+                transform: translateY(20px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0); 
+            }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
         @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 1.5rem;
+                margin-top: 60px;
+            }
+            .header i {
+                font-size: 2rem;
+            }
+            .header h1 {
+                font-size: 1.3rem;
+            }
+            .info-box {
+                padding: 0.8rem;
+            }
             .back-btn {
                 top: 10px;
                 left: 10px;
-                padding: 8px 16px;
-                font-size: 14px;
+                padding: 6px 12px;
+                font-size: 0.85rem;
+            }
+            .status-message {
+                font-size: 0.85rem;
             }
         }
     </style>
 </head>
 <body>
-    <a href="login.html" class="back-btn">
-        <i class="fas fa-arrow-left"></i>
-        Back to Login
-    </a>
-
     <div class="container">
         <div class="header">
             <i class="fas fa-shield-alt"></i>
@@ -167,21 +330,34 @@
 
         // Check authentication state on load
         window.addEventListener('load', () => {
-            firebase.auth().onAuthStateChanged((user) => {
-                const statusMessage = document.getElementById('statusMessage');
-                if (user) {
-                    console.log('Currently logged in user:', user.email);
-                    document.querySelector('.send-otp-btn').disabled = false;
-                    // Display the current user's email on the page
-                    statusMessage.textContent = 'Logged in as: ' + user.email;
-                    statusMessage.className = 'status-message success';
-                } else {
-                    console.log('No user is authenticated');
-                    statusMessage.textContent = 'Please login first to receive OTP.';
-                    statusMessage.className = 'status-message error';
-                    document.querySelector('.send-otp-btn').disabled = true;
-                }
-            });
+            // Get email from URL if present
+            const urlParams = new URLSearchParams(window.location.search);
+            const emailFromURL = urlParams.get('email');
+            const statusMessage = document.getElementById('statusMessage');
+            const sendOTPBtn = document.querySelector('.send-otp-btn');
+
+            if (emailFromURL) {
+                // If email is provided in URL (QR code scan), enable direct OTP sending
+                console.log('Email from URL:', emailFromURL);
+                sendOTPBtn.disabled = false;
+                statusMessage.textContent = 'Ready to send OTP to: ' + emailFromURL;
+                statusMessage.className = 'status-message success';
+            } else {
+                // Check Firebase auth only if no email in URL
+                firebase.auth().onAuthStateChanged((user) => {
+                    if (user) {
+                        console.log('Currently logged in user:', user.email);
+                        sendOTPBtn.disabled = false;
+                        statusMessage.textContent = 'Logged in as: ' + user.email;
+                        statusMessage.className = 'status-message success';
+                    } else {
+                        console.log('No user is authenticated');
+                        statusMessage.textContent = 'Please login first to receive OTP.';
+                        statusMessage.className = 'status-message error';
+                        sendOTPBtn.disabled = true;
+                    }
+                });
+            }
         });
 
         async function sendOTP() {
@@ -193,19 +369,37 @@
                 statusMessage.textContent = 'Sending OTP...';
                 statusMessage.className = 'status-message';
 
-                // Force refresh the current user
-                await firebase.auth().currentUser.reload();
-                const user = firebase.auth().currentUser;
-                
-                if (!user || !user.email) {
-                    throw new Error('No authenticated user found. Please login again.');
+                let userEmail;
+                // Check URL parameters first
+                const urlParams = new URLSearchParams(window.location.search);
+                const emailFromURL = urlParams.get('email');
+
+                if (emailFromURL) {
+                    // Use email from URL if available (QR code scan)
+                    userEmail = emailFromURL;
+                } else {
+                    // Otherwise use Firebase authenticated user's email
+                    await firebase.auth().currentUser.reload();
+                    const user = firebase.auth().currentUser;
+                    
+                    if (!user || !user.email) {
+                        throw new Error('No authenticated user found. Please login again.');
+                    }
+                    userEmail = user.email;
                 }
 
-                const userEmail = user.email;
-                console.log('Sending OTP to current user:', userEmail);
+                console.log('Sending OTP to:', userEmail);
 
                 const otp = generateOTP();
                 console.log('Generated OTP:', otp);
+
+                // Store OTP in Firebase Realtime Database
+                const otpRef = firebase.database().ref('otps/' + userEmail.replace('.', '_'));
+                await otpRef.set({
+                    code: otp,
+                    timestamp: firebase.database.ServerValue.TIMESTAMP,
+                    email: userEmail
+                });
 
                 // Send email using EmailJS
                 const response = await emailjs.send(
@@ -223,7 +417,6 @@
                 console.log('Email sent successfully:', response);
                 statusMessage.textContent = 'OTP sent successfully to ' + userEmail;
                 statusMessage.className = 'status-message success';
-                localStorage.setItem('currentOTP', otp);
 
                 let secondsLeft = 60;
                 updateTimer(secondsLeft);
@@ -235,7 +428,7 @@
                     if (secondsLeft <= 0) {
                         clearInterval(timer);
                         button.disabled = false;
-                        statusMessage.textContent = 'Logged in as: ' + userEmail;
+                        statusMessage.textContent = 'Ready to send OTP to: ' + userEmail;
                     }
                 }, 1000);
 
