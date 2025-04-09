@@ -312,12 +312,7 @@
     <script>
         // Initialize EmailJS
         (function() {
-            emailjs.init({
-                publicKey: "5GgOFke6DlrWL5_zr",
-                blockHeadless: false,  // Required for some environments
-                limitRate: true        // Optional rate limiting
-            });
-            console.log('EmailJS initialized with public key');
+            emailjs.init("5GgOFke6DlrWL5_zr");
         })();
 
         function generateOTP() {
@@ -368,68 +363,52 @@
                 const otp = generateOTP();
                 console.log('Generated OTP:', otp);
 
-                console.log('Attempting to send email with EmailJS...');
+                // First store in Firebase
+                console.log('Storing OTP in Firebase...');
+                const otpRef = firebase.database().ref('otps/' + userEmail.replace('.', '_'));
+                await otpRef.set({
+                    code: otp,
+                    timestamp: firebase.database.ServerValue.TIMESTAMP,
+                    email: userEmail
+                });
+
+                console.log('OTP stored in Firebase, now sending email...');
                 
-                try {
-                    const templateParams = {
-                        to_email: userEmail,
-                        to_name: userEmail.split('@')[0],
-                        from_name: 'E-Authentication System',
-                        otp: otp,
-                        message: `Your OTP is: ${otp}`
-                    };
+                // Prepare email parameters
+                const templateParams = {
+                    to_email: userEmail,
+                    to_name: userEmail.split('@')[0],
+                    from_name: 'E-Authentication System',
+                    otp: otp,
+                    message: `Your OTP is: ${otp}`
+                };
 
-                    statusMessage.textContent = 'Sending email...';
-                    
-                    // Updated EmailJS send method
-                    const response = await emailjs.send(
-                        'service_zlqtm7c',
-                        'template_vh13f8d',
-                        templateParams
-                    ).then(
-                        function(response) {
-                            console.log('Email sent successfully:', response);
-                            return response;
-                        },
-                        function(error) {
-                            console.error('EmailJS Error:', error);
-                            throw error;
-                        }
-                    );
-
-                    // Store in Firebase
-                    console.log('Storing OTP in Firebase...');
-                    statusMessage.textContent = 'Finalizing...';
-                    
-                    const otpRef = firebase.database().ref('otps/' + userEmail.replace('.', '_'));
-                    await otpRef.set({
-                        code: otp,
-                        timestamp: firebase.database.ServerValue.TIMESTAMP,
-                        email: userEmail
+                statusMessage.textContent = 'Sending email...';
+                
+                // Send email using EmailJS with promise handling
+                await emailjs.send('service_zlqtm7c', 'template_vh13f8d', templateParams)
+                    .then(function(response) {
+                        console.log('SUCCESS!', response.status, response.text);
+                        statusMessage.textContent = 'OTP sent successfully to ' + userEmail;
+                        statusMessage.className = 'status-message success';
+                    }, function(error) {
+                        console.log('FAILED...', error);
+                        throw new Error('Failed to send email: ' + error.text);
                     });
 
-                    console.log('OTP stored in Firebase');
-                    statusMessage.textContent = 'OTP sent successfully to ' + userEmail;
-                    statusMessage.className = 'status-message success';
-
-                    let secondsLeft = 60;
+                let secondsLeft = 60;
+                updateTimer(secondsLeft);
+                
+                const timer = setInterval(() => {
+                    secondsLeft--;
                     updateTimer(secondsLeft);
                     
-                    const timer = setInterval(() => {
-                        secondsLeft--;
-                        updateTimer(secondsLeft);
-                        
-                        if (secondsLeft <= 0) {
-                            clearInterval(timer);
-                            button.disabled = false;
-                            statusMessage.textContent = 'Ready to send OTP to: ' + userEmail;
-                        }
-                    }, 1000);
-
-                } catch (emailError) {
-                    console.error('EmailJS Error:', emailError);
-                    throw new Error('Failed to send email: ' + (emailError.text || emailError.message));
-                }
+                    if (secondsLeft <= 0) {
+                        clearInterval(timer);
+                        button.disabled = false;
+                        statusMessage.textContent = 'Ready to send OTP to: ' + userEmail;
+                    }
+                }, 1000);
 
             } catch (error) {
                 console.error('Failed to send OTP:', error);
@@ -437,6 +416,12 @@
                 statusMessage.textContent = 'Failed to send OTP: ' + errorMessage;
                 statusMessage.className = 'status-message error';
                 button.disabled = false;
+                
+                // If Firebase write succeeded but email failed, clean up the OTP
+                if (error.message.includes('Failed to send email')) {
+                    const otpRef = firebase.database().ref('otps/' + userEmail.replace('.', '_'));
+                    await otpRef.remove();
+                }
             }
         }
     </script>
