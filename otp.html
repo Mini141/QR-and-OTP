@@ -312,7 +312,9 @@
     <script>
         // Initialize EmailJS with your public key
         (function() {
-            emailjs.init("5GgOFke6DlrWL5_zr");
+            emailjs.init({
+                publicKey: "5GgOFke6DlrWL5_zr"
+            });
             console.log('EmailJS initialized with public key');
         })();
 
@@ -381,11 +383,14 @@
                     };
 
                     statusMessage.textContent = 'Sending email...';
+                    
+                    // Send email using EmailJS
                     const response = await emailjs.send(
-                        'service_zlqtm7c',  // Your EmailJS service ID
-                        'template_vh13f8d',  // Your EmailJS template ID
+                        'service_zlqtm7c',
+                        'template_vh13f8d',
                         templateParams
                     );
+
                     console.log('Email sent successfully:', response);
                     
                     // Only store in Firebase if email was sent successfully
