@@ -343,21 +343,6 @@
                 sendOTPBtn.disabled = false;
                 statusMessage.textContent = 'Ready to send OTP to: ' + emailFromURL;
                 statusMessage.className = 'status-message success';
-            } else {
-                // Check Firebase auth only if no email in URL
-                firebase.auth().onAuthStateChanged((user) => {
-                    if (user) {
-                        console.log('Currently logged in user:', user.email);
-                        sendOTPBtn.disabled = false;
-                        statusMessage.textContent = 'Logged in as: ' + user.email;
-                        statusMessage.className = 'status-message success';
-                    } else {
-                        console.log('No user is authenticated');
-                        statusMessage.textContent = 'Please login first to receive OTP.';
-                        statusMessage.className = 'status-message error';
-                        sendOTPBtn.disabled = true;
-                    }
-                });
             }
         });
 
@@ -370,23 +355,12 @@
                 statusMessage.textContent = 'Sending OTP...';
                 statusMessage.className = 'status-message';
 
-                let userEmail;
-                // Check URL parameters first
+                // Get email from URL
                 const urlParams = new URLSearchParams(window.location.search);
-                const emailFromURL = urlParams.get('email');
+                const userEmail = urlParams.get('email');
 
-                if (emailFromURL) {
-                    // Use email from URL if available (QR code scan)
-                    userEmail = emailFromURL;
-                } else {
-                    // Otherwise use Firebase authenticated user's email
-                    await firebase.auth().currentUser.reload();
-                    const user = firebase.auth().currentUser;
-                    
-                    if (!user || !user.email) {
-                        throw new Error('No authenticated user found. Please login again.');
-                    }
-                    userEmail = user.email;
+                if (!userEmail) {
+                    throw new Error('Email not found in URL parameters');
                 }
 
                 console.log('Sending OTP to:', userEmail);
@@ -394,7 +368,7 @@
                 const otp = generateOTP();
                 console.log('Generated OTP:', otp);
 
-                // Store OTP in Firebase Realtime Database
+                // First store OTP in Firebase
                 const otpRef = firebase.database().ref('otps/' + userEmail.replace('.', '_'));
                 await otpRef.set({
                     code: otp,
@@ -402,17 +376,23 @@
                     email: userEmail
                 });
 
-                // Send email using EmailJS
+                console.log('OTP stored in Firebase');
+
+                // Then send email using EmailJS
+                const templateParams = {
+                    to_email: userEmail,
+                    to_name: userEmail.split('@')[0],
+                    from_name: 'E-Authentication System',
+                    otp: otp,
+                    message: `Your OTP is: ${otp}`
+                };
+
+                console.log('Sending email with EmailJS...');
+                
                 const response = await emailjs.send(
-                    'service_zlqtm7c',
-                    'template_vh13f8d',
-                    {
-                        to_email: userEmail,
-                        to_name: userEmail.split('@')[0],
-                        from_name: 'E-Authentication System',
-                        otp: otp,
-                        message: `Your OTP is: ${otp}`
-                    }
+                    'service_zlqtm7c',  // Your EmailJS service ID
+                    'template_vh13f8d',  // Your EmailJS template ID
+                    templateParams
                 );
 
                 console.log('Email sent successfully:', response);
