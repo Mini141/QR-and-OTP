@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Send OTP</title>
-    <!-- EmailJS SDK -->
+    <!-- EmailJS SDK - Using the latest version -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -310,10 +310,12 @@
     </div>
 
     <script>
-        // Initialize EmailJS with your public key
+        // Initialize EmailJS
         (function() {
             emailjs.init({
-                publicKey: "5GgOFke6DlrWL5_zr"
+                publicKey: "5GgOFke6DlrWL5_zr",
+                blockHeadless: false,  // Required for some environments
+                limitRate: true        // Optional rate limiting
             });
             console.log('EmailJS initialized with public key');
         })();
@@ -333,14 +335,12 @@
 
         // Check authentication state on load
         window.addEventListener('load', () => {
-            // Get email from URL if present
             const urlParams = new URLSearchParams(window.location.search);
             const emailFromURL = urlParams.get('email');
             const statusMessage = document.getElementById('statusMessage');
             const sendOTPBtn = document.querySelector('.send-otp-btn');
 
             if (emailFromURL) {
-                // If email is provided in URL (QR code scan), enable direct OTP sending
                 console.log('Email from URL:', emailFromURL);
                 sendOTPBtn.disabled = false;
                 statusMessage.textContent = 'Ready to send OTP to: ' + emailFromURL;
@@ -357,7 +357,6 @@
                 statusMessage.textContent = 'Sending OTP...';
                 statusMessage.className = 'status-message';
 
-                // Get email from URL
                 const urlParams = new URLSearchParams(window.location.search);
                 const userEmail = urlParams.get('email');
 
@@ -366,11 +365,9 @@
                 }
 
                 console.log('Sending OTP to:', userEmail);
-
                 const otp = generateOTP();
                 console.log('Generated OTP:', otp);
 
-                // First try sending email using EmailJS
                 console.log('Attempting to send email with EmailJS...');
                 
                 try {
@@ -384,16 +381,23 @@
 
                     statusMessage.textContent = 'Sending email...';
                     
-                    // Send email using EmailJS
+                    // Updated EmailJS send method
                     const response = await emailjs.send(
                         'service_zlqtm7c',
                         'template_vh13f8d',
                         templateParams
+                    ).then(
+                        function(response) {
+                            console.log('Email sent successfully:', response);
+                            return response;
+                        },
+                        function(error) {
+                            console.error('EmailJS Error:', error);
+                            throw error;
+                        }
                     );
 
-                    console.log('Email sent successfully:', response);
-                    
-                    // Only store in Firebase if email was sent successfully
+                    // Store in Firebase
                     console.log('Storing OTP in Firebase...');
                     statusMessage.textContent = 'Finalizing...';
                     
